@@ -32,6 +32,11 @@ class CustomJSONEncoder(json.JSONEncoder):
 
 app.json_encoder = CustomJSONEncoder
 
+# Add a health check endpoint
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "ok", "message": "Service is running"})
+
 @app.route('/api/data', methods=['GET'])
 def get_data():
     # Get parameters from request
