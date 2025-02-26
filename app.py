@@ -52,7 +52,7 @@ def get_data():
     # Log received request with parameters
     file_url = request.args.get('url', 'No URL provided')
     page = request.args.get('page', '1')
-    rows_per_page = request.args.get('rows_per_page', '10')
+    rows_per_page = request.args.get('rows_per_page', '100')
     
     # Mask part of the URL for privacy in logs if needed
     safe_url = file_url
@@ -73,7 +73,14 @@ def get_data():
         return jsonify({"error": error_msg}), 400
         
     try:
-        rows_per_page = int(request.args.get('rows_per_page', 10))
+        # Default to 100 rows per page
+        rows_per_page = int(request.args.get('rows_per_page', 100))
+        
+        # Enforce upper limit of 5000 rows per page
+        MAX_ROWS_PER_PAGE = 5000
+        if rows_per_page > MAX_ROWS_PER_PAGE:
+            logger.warning(f"Requested rows_per_page ({rows_per_page}) exceeds maximum allowed ({MAX_ROWS_PER_PAGE}). Using maximum value.")
+            rows_per_page = MAX_ROWS_PER_PAGE
     except ValueError:
         error_msg = "Rows per page parameter must be a valid integer"
         logger.error(f"Error: {error_msg}")
