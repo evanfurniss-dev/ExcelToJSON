@@ -144,6 +144,12 @@ def get_data():
                     row_dict[str(col)] = str(row[col]) if row[col] is not None else None
                 data.append(row_dict)
             logger.info("Successfully converted page data to JSON using fallback method")
+            
+        # Add pushDate field to every row
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        logger.info(f"Adding pushDate={current_date} to each row")
+        for row in data:
+            row['pushDate'] = current_date
         
         # Prepare response
         response_data = {
